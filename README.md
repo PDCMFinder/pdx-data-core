@@ -7,4 +7,5 @@ PDX data core
 
 The PDX-data-core is a base data model to represent PDX data.  This was extracted from the <a href="https://www.pdxfinder.org">PDX Finder project</a>.
 
+The object model is dexcribed in the [PDX data core concepts documentaion](core-concepts.md)
 
