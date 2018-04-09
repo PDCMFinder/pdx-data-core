@@ -2,6 +2,8 @@
 
 [![Gitter](https://badges.gitter.im/pdx-data-core/Lobby.svg)](https://gitter.im/pdx-data-core/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+Travis CI: [![Build Status](https://travis-ci.org/PDXFinder/pdx-data-core.svg?branch=master)](https://travis-ci.org/PDXFinder/pdx-data-core)
+
 PDX data core
 -------------
 
