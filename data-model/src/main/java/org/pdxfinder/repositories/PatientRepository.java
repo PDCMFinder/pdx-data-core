@@ -1,5 +1,6 @@
 package org.pdxfinder.repositories;
 
+import org.pdxfinder.dao.ExternalDataSource;
 import org.pdxfinder.dao.Patient;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -14,9 +15,8 @@ public interface PatientRepository extends Neo4jRepository<Patient, Long> {
 
     Set<Patient> findBySex(String sex);
 
-    Set<Patient> findBySexAndSnapshotsAge(String sex, String age);
-
-    Patient findByExternalId(String externalId);
+    @Query("MATCH (p:Patient)--(ds:ExternalDataSource) WHERE p.externalId = {externalId} AND id(ds) = {xds} RETURN p")
+    Patient findByExternalIdAndDS(@Param("externalId") String externalId, @Param("xds") ExternalDataSource xds);
 
     @Query("MATCH (mod:ModelCreation)-[ii:IMPLANTED_IN]-(s:Sample) " +
             "MATCH (s:Sample)-[sf:SAMPLED_FROM]-(ps:PatientSnapshot)-[pt:PATIENT]-(p:Patient) " +
@@ -54,11 +54,11 @@ public interface PatientRepository extends Neo4jRepository<Patient, Long> {
 
             "            RETURN pat,patRel,ps,sfrm,psamp,char,molch,mAss,m SKIP {skip} LIMIT {lim} ")
     Set<Patient> findSpecimenBySourcePdxIdAndPlatform(@Param("dataSource") String dataSource,
-                                                       @Param("modelId") String modelId,
-                                                       @Param("tech") String tech,
-                                                       @Param("search") String search,
-                                                       @Param("skip") int skip,
-                                                       @Param("lim") int lim);
+                                                      @Param("modelId") String modelId,
+                                                      @Param("tech") String tech,
+                                                      @Param("search") String search,
+                                                      @Param("skip") int skip,
+                                                      @Param("lim") int lim);
 
 
 
@@ -76,9 +76,9 @@ public interface PatientRepository extends Neo4jRepository<Patient, Long> {
             "            OR any( property in keys(mAss) where toLower(mAss[property]) CONTAINS toLower({search}) )  " +
             "            RETURN count(*) ")
     Integer countByBySourcePdxIdAndPlatform(@Param("dataSource") String dataSource,
-                                                      @Param("modelId") String modelId,
-                                                      @Param("tech") String tech,
-                                                      @Param("search") String search);
+                                            @Param("modelId") String modelId,
+                                            @Param("tech") String tech,
+                                            @Param("search") String search);
 
 
 
@@ -88,7 +88,7 @@ public interface PatientRepository extends Neo4jRepository<Patient, Long> {
             "WITH p " +
             "MATCH (p:Patient)--(ps:PatientSnapshot)--(s:Sample)--(mod:ModelCreation) " +
             "WHERE mod.sourcePdxId <> {modelId} " +
-            "RETURN mod.sourcePdxId")
+            "RETURN DISTINCT mod.sourcePdxId ORDER BY mod.sourcePdxId")
     List<String> getModelsOriginatedFromSamePatientByDataSourceAndModelId(@Param("dataSource") String dataSource,
                                                                           @Param("modelId") String modelId);
 

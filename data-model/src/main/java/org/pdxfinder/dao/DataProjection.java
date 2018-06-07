@@ -3,14 +3,8 @@ package org.pdxfinder.dao;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
-/**
- * DataProjection represents a node used to store a pre-computed view of the data.
- *
- * <p>Some queries can be computationally expensive to calculate and so the value can be pre-computed and
- * a DataProjection node may be used to cache the value in permanent storage, obviating the need
- * to perform the query at runtime.</p>
- *
- * <p>The value field can contain a serialized (e.g., JSON) representation of the result.</p>
+/*
+ * Created by csaba on 09/03/2018.
  */
 @NodeEntity
 public class DataProjection {

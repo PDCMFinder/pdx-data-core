@@ -136,7 +136,7 @@ public class ModelIntegrationTest extends BaseTest {
 
         MarkerAssociation ma = new MarkerAssociation();
         ma.setMarker(marker);
-        mc.setMarkerAssociations(new HashSet<>(Collections.singletonList(ma)));
+        mc.setMarkerAssociations(Collections.singletonList(ma));
 
         Sample sample = new Sample("sample-1", tumorType, "TEST_DIAGNOSIS", tissue, tissue, "Surgical Resection", "TEST_CLASSIFICATION", false, externalDataSource.getAbbreviation());
         sampleRepository.save(sample);
@@ -161,8 +161,8 @@ public class ModelIntegrationTest extends BaseTest {
         /*
         ModelCreation modelCreation = new ModelCreation(
                 modelCreationId,
-                new ImplantationSite(tissueName),
-                new ImplantationType("subcutis"),
+                new EngraftmentSite(tissueName),
+                new EngraftmentType("subcutis"),
                 sample,
                 new HostStrain("TEST_STRAIN"),
                 new QualityAssurance("test", "Test description", ValidationTechniques.VALIDATION));
@@ -178,7 +178,7 @@ public class ModelIntegrationTest extends BaseTest {
         specimenRepository.save(specimen);
 
         // Assert the nodes have been persisted in the correct graph
-        Specimen found = specimenRepository.findByExternalId("TEST_SPECIMEN");
+        Specimen found = specimenRepository.findByExternalIdAndDS("TEST_SPECIMEN");
         assert found.getPdxPassage().getPassage() == 1;
         assert found.getPdxPassage().getPdxPassage().getModelCreation().getSample().getSampleSite() == tissue;
 
