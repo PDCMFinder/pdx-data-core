@@ -24,6 +24,12 @@ public class Sample {
     private Tissue sampleSite;
     private String extractionMethod;
     private String classification;
+    private String stage;
+    private String stageClassification;
+    private String grade;
+    private String gradeClassification;
+    //TODO: remove classification field and use stage and grade instead.
+
     public Boolean normalTissue;
     private String dataSource;
 
@@ -47,7 +53,8 @@ public class Sample {
         // Empty constructor required as of Neo4j API 2.0.5
     }
 
-    public Sample(String sourceSampleId, TumorType type, String diagnosis, Tissue originTissue, Tissue sampleSite, String extractionMethod, String classification, Boolean normalTissue, String dataSource) {
+    public Sample(String sourceSampleId, TumorType type, String diagnosis, Tissue originTissue, Tissue sampleSite, String extractionMethod,
+                  String classification, Boolean normalTissue, String dataSource) {
         this.sourceSampleId = sourceSampleId;
         this.type = type;
         this.diagnosis = diagnosis;
@@ -58,6 +65,22 @@ public class Sample {
         this.normalTissue = normalTissue;
         this.dataSource = dataSource;
 
+    }
+
+    public Sample(String sourceSampleId, TumorType type, String diagnosis, Tissue originTissue, Tissue sampleSite, String extractionMethod,
+                  String stage, String stageClassification, String grade, String gradeClassification, Boolean normalTissue, String dataSource) {
+        this.sourceSampleId = sourceSampleId;
+        this.type = type;
+        this.diagnosis = diagnosis;
+        this.originTissue = originTissue;
+        this.sampleSite = sampleSite;
+        this.extractionMethod = extractionMethod;
+        this.stage = stage;
+        this.stageClassification = stageClassification;
+        this.grade = grade;
+        this.gradeClassification = gradeClassification;
+        this.normalTissue = normalTissue;
+        this.dataSource = dataSource;
     }
 
     public String getSourceSampleId() {
@@ -185,5 +208,37 @@ public class Sample {
 
     public void setPatientSnapshot(PatientSnapshot patientSnapshot) {
         this.patientSnapshot = patientSnapshot;
+    }
+
+    public String getStage() {
+        return stage;
+    }
+
+    public void setStage(String stage) {
+        this.stage = stage;
+    }
+
+    public String getStageClassification() {
+        return stageClassification;
+    }
+
+    public void setStageClassification(String stageClassification) {
+        this.stageClassification = stageClassification;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
+    public String getGradeClassification() {
+        return gradeClassification;
+    }
+
+    public void setGradeClassification(String gradeClassification) {
+        this.gradeClassification = gradeClassification;
     }
 }

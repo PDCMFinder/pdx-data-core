@@ -3,23 +3,32 @@ package org.pdxfinder.dao;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
-/**
- * Represents the type of implantation. e.g. Orthotopic, Heterotopic
+/*
+ * Created by csaba on 24/07/2018.
  */
 @NodeEntity
-public class ImplantationType {
+public class CurrentTreatment {
 
     @GraphId
     private Long id;
 
     private String name;
 
-    private ImplantationType() {
-        // Empty constructor required as of Neo4j API 2.0.5
+
+    public CurrentTreatment() {
     }
 
-    public ImplantationType(String name) {
+
+    public CurrentTreatment(String name) {
         this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

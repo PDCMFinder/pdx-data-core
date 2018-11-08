@@ -31,7 +31,15 @@ public interface SpecimenRepository extends Neo4jRepository<Specimen, Long> {
             @Param("specimenId") String specimenId,
             @Param("passage") String passage);
 
-
+    @Query("MATCH (mod:ModelCreation)--(spec:Specimen) " +
+            "WHERE mod.dataSource = {dataSource} " +
+            "AND mod.sourcePdxId = {modelId} " +
+            "AND spec.passage = {passage} " +
+            "RETURN spec")
+    List<Specimen> findByModelIdAndDataSourceAndAndPassage(
+            @Param("modelId") String modelId,
+            @Param("dataSource") String dataSource,
+            @Param("passage") String passage);
 
 
     @Query("MATCH (mod:ModelCreation)-[sp:SPECIMENS]-(spec:Specimen)-[sfrm:SAMPLED_FROM]-(msamp:Sample)" +
@@ -59,6 +67,18 @@ public interface SpecimenRepository extends Neo4jRepository<Specimen, Long> {
 
 
 
+    @Query("MATCH (mod:ModelCreation)-[spr:SPECIMENS]-(sp:Specimen) " +
+            "WHERE  mod.dataSource = {dataSource}  " +
+            "AND    mod.sourcePdxId = {modelId}  " +
+            "WITH sp " +
+            "OPTIONAL MATCH (sp)-[etr:ENGRAFTMENT_TYPE]-(et:EngraftmentType) " +
+            "OPTIONAL MATCH (sp)-[esr:ENGRAFTMENT_SITE]-(es:EngraftmentSite) " +
+            "OPTIONAL MATCH (sp)-[emr:ENGRAFTMENT_MATERIAL]-(em:EngraftmentMaterial) " +
+            "OPTIONAL MATCH (sp)-[hsr:HOST_STRAIN]-(hs:HostStrain) " +
+            "RETURN sp, etr, et, esr, es, emr, em, hsr, hs")
+    List<Specimen> findByDataSourceAndModelId(@Param("dataSource") String dataSource,
+                                              @Param("modelId") String modelId);
+
     @Query("MATCH (mod:ModelCreation)-[sp:SPECIMENS]-(spec:Specimen)-[sfrm:SAMPLED_FROM]-(msamp:Sample) " +
             "            -[char:CHARACTERIZED_BY]-(molchar:MolecularCharacterization) " +
             "            WITH mod, spec, sp, sfrm,msamp, char,molchar " +
@@ -70,8 +90,8 @@ public interface SpecimenRepository extends Neo4jRepository<Specimen, Long> {
 
             "            RETURN spec, sfrm,msamp, char,molchar,pl,tech ")
     List<Specimen> findSpecimenBySourcePdxIdAndPlatform2(@Param("dataSource") String dataSource,
-                                                         @Param("modelId") String modelId,
-                                                         @Param("tech") String tech);
+                                                        @Param("modelId") String modelId,
+                                                        @Param("tech") String tech);
 
 
 
@@ -108,8 +128,12 @@ public interface SpecimenRepository extends Neo4jRepository<Specimen, Long> {
 
             "            RETURN count(*) ")
     Integer countByPlatform(@Param("dataSource") String dataSource,
-                            @Param("modelId") String modelId,
-                            @Param("tech") String tech,
-                            @Param("passage") String passage);
+                                              @Param("modelId") String modelId,
+                                              @Param("tech") String tech,
+                                              @Param("passage") String passage);
+
+
+    @Query("MATCH (mod:ModelCreation)--(sp:Specimen) WHERE mod.sourcePdxId = {modelId} AND mod.dataSource = {dataSource} RETURN sp")
+    List<Specimen> findByModelIdAndDataSource(@Param("modelId") String modelId, @Param("dataSource") String dataSource);
 
 }
