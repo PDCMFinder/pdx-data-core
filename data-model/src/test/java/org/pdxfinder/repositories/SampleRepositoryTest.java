@@ -4,10 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.pdxfinder.BaseTest;
-import org.pdxfinder.dao.ExternalDataSource;
-import org.pdxfinder.dao.Sample;
-import org.pdxfinder.dao.Tissue;
-import org.pdxfinder.dao.TumorType;
+import org.pdxfinder.dao.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +35,14 @@ public class SampleRepositoryTest extends BaseTest {
     private PatientRepository patientRepository;
 
     @Autowired
-    private ExternalDataSourceRepository externalDataSourceRepository;
+    private GroupRepository groupRepository;
 
     @Before
     public void cleanDb() {
 
         sampleRepository.deleteAll();
         patientRepository.deleteAll();
-        externalDataSourceRepository.deleteAll();
+        groupRepository.deleteAll();
         tissueRepository.deleteAll();
 
         TumorType tumorType = tumorTypeRepository.findByName(tumorTypeName);
@@ -55,11 +52,11 @@ public class SampleRepositoryTest extends BaseTest {
             tumorTypeRepository.save(tumorType);
         }
 
-        ExternalDataSource ds = externalDataSourceRepository.findByName(extDsName);
+        Group ds = groupRepository.findByNameAndType(extDsName, "Provider");
         if (ds == null) {
             log.debug("External data source {} not found. Creating", extDsName);
-            ds = new ExternalDataSource(extDsName, extDsName, extDsName, extDsName, Date.from(Instant.now()));
-            externalDataSourceRepository.save(ds);
+            ds = new Group(extDsName, extDsName, "Provider");
+            groupRepository.save(ds);
         }
 
         Tissue tissue = tissueRepository.findByName(tissueName);
@@ -85,7 +82,7 @@ public class SampleRepositoryTest extends BaseTest {
 
         TumorType tumorType = tumorTypeRepository.findByName(tumorTypeName);
         Tissue tissue = tissueRepository.findByName(tissueName);
-        ExternalDataSource externalDataSource = externalDataSourceRepository.findByAbbreviation(extDsName);
+        Group externalDataSource = groupRepository.findByNameAndType(extDsName, "Provider");
 
         String TEST_TUMOR_ID = "TESTID-1";
         generateTumor(tumorType, tissue, externalDataSource, TEST_TUMOR_ID);
@@ -101,7 +98,7 @@ public class SampleRepositoryTest extends BaseTest {
 
         TumorType tumorType = tumorTypeRepository.findByName(tumorTypeName);
         Tissue tissue = tissueRepository.findByName(tissueName);
-        ExternalDataSource externalDataSource = externalDataSourceRepository.findByAbbreviation(extDsName);
+        Group externalDataSource = groupRepository.findByNameAndType(extDsName, "Provider");
 
         String testTumorId = "DELETE_TESTID-1";
         generateTumor(tumorType, tissue, externalDataSource, testTumorId);
@@ -120,7 +117,7 @@ public class SampleRepositoryTest extends BaseTest {
 
         TumorType tumorType = tumorTypeRepository.findByName(tumorTypeName);
         Tissue tissue = tissueRepository.findByName(tissueName);
-        ExternalDataSource externalDataSource = externalDataSourceRepository.findByAbbreviation(extDsName);
+        Group externalDataSource = groupRepository.findByNameAndType(extDsName, "Provider");
 
         for (Integer i = 0; i < 20; i++) {
             String testTumorId = "TESTID-" + i;
@@ -136,7 +133,7 @@ public class SampleRepositoryTest extends BaseTest {
 
     }
 //String sourceSampleId, TumorType type, String diagnosis, Tissue originTissue, Tissue sampleSite, String extractionMethod, String classification, Boolean normalTissue
-    private void generateTumor(TumorType tumorType, Tissue tissue, ExternalDataSource externalDataSource, String TEST_TUMOR_ID) {
+    private void generateTumor(TumorType tumorType, Tissue tissue, Group externalDataSource, String TEST_TUMOR_ID) {
         Sample sample = new Sample(TEST_TUMOR_ID, tumorType, "TEST_DIAGNOSIS", tissue, tissue, "Surgical Resection", "TEST_CLASSIFICATION", false, externalDataSource.getAbbreviation());
         sampleRepository.save(sample);
     }

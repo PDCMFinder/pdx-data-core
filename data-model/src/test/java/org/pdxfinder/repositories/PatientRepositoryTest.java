@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pdxfinder.BaseTest;
 import org.pdxfinder.dao.ExternalDataSource;
+import org.pdxfinder.dao.Group;
 import org.pdxfinder.dao.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class PatientRepositoryTest extends BaseTest {
     private String extDsName = "TEST_SOURCE";
 
     @Autowired
-    private ExternalDataSourceRepository externalDataSourceRepository;
+    private GroupRepository groupRepository;
 
     @Autowired
     private PatientRepository patientRepository;
@@ -31,20 +32,20 @@ public class PatientRepositoryTest extends BaseTest {
     public void setupDb() {
 
         patientRepository.deleteAll();
-        externalDataSourceRepository.deleteAll();
+        groupRepository.deleteAll();
 
-        ExternalDataSource ds = externalDataSourceRepository.findByName(extDsName);
+        Group ds = groupRepository.findByNameAndType(extDsName, "Provider");
         if (ds == null) {
             log.debug("External data source {} not found. Creating", extDsName);
-            ds = new ExternalDataSource(extDsName, extDsName, extDsName, extDsName, Date.from(Instant.now()));
-            externalDataSourceRepository.save(ds);
+            ds = new Group(extDsName, extDsName, "Provider");
+            groupRepository.save(ds);
         }
     }
 
     @Test
     public void persistedPatientShouldBeRetrievableFromGraphDb() throws Exception {
 
-        ExternalDataSource externalDataSource = externalDataSourceRepository.findByAbbreviation(extDsName);
+        Group externalDataSource = groupRepository.findByNameAndType(extDsName, "Provider");
 
         Patient femalePatient = new Patient("-9999", "F", null, null, externalDataSource);
         patientRepository.save(femalePatient);
@@ -55,8 +56,8 @@ public class PatientRepositoryTest extends BaseTest {
 
         log.info(foundFemalePatient.toString());
 
-        patientRepository.delete(patientRepository.findByExternalIdAndDS("-9999", externalDataSource));
-        Patient notFoundFemalePatient = patientRepository.findByExternalIdAndDS("-9999", externalDataSource);
+        patientRepository.delete(patientRepository.findByExternalIdAndGroup("-9999", externalDataSource));
+        Patient notFoundFemalePatient = patientRepository.findByExternalIdAndGroup("-9999", externalDataSource);
         assert (notFoundFemalePatient == null);
 
 
